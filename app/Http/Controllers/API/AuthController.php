@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\AuthService;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -20,6 +21,9 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $user = $this->data->register($request->validated());
+
+        event(new Registered($user));
+
         return response()->json([
             'message' => 'User registered successfully',
             'user' => $user,
