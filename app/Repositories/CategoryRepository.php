@@ -29,8 +29,10 @@ use App\Models\Category;
     }
    return $this->category->create(
     [
-        "name"=>$entity['name'],
-        "description"=>$entity['description'],
+        "name_en"=>$entity['name_en'],
+        "name_ar"=>$entity['name_ar'],
+        "description_en"=>$entity['description_en'],
+        "description_ar"=>$entity['description_ar'],
         "status"=>$entity['status'] ?? 'active',
         'image' => $imageName ? asset('images/categories/' . $imageName) : null
 
@@ -54,8 +56,10 @@ use App\Models\Category;
      $image->move(public_path('images/categories'),$imageName);
     }
      $cat->update([
-        "name"=>$entity['name'],
-        "description"=>$entity['description'],
+        "name_en"=>$entity['name_en'],
+        "name_ar"=>$entity['name_ar'],
+        "description_en"=>$entity['description_en'],
+        "description_ar"=>$entity['description_ar'],
         "status"=>$entity['status'],
         'image' => $imageName ? asset('images/categories/' . $imageName) : null
     ]);

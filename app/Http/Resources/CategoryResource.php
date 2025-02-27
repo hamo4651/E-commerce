@@ -14,6 +14,16 @@ class CategoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+
+        $lang = $request->header('Accept-Language', 'en');
+
+        return [
+            'id' => $this->id,
+            'name' => $lang === 'ar' ? $this->name_ar : $this->name_en,
+            'description' => $lang === 'ar' ? $this->description_ar : $this->description_en,
+            'image' => $this->image,
+            'status' => $this->status,
+        ];
+    
     }
 }

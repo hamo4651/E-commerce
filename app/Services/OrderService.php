@@ -23,13 +23,18 @@ class OrderService
         }
         $products = [];
         $total = 0;
-
+        $locale = $request->header('Accept-Language', 'en'); 
+        // dd($cartItems);
         foreach ($cartItems as $item) {
             $subtotal = $item->price * $item->qty;
+            $name_en = $item->options['name_en'] ?? null;
+            $name_ar = $item->options['name_ar'] ?? null;
+        
+            $name = $locale === 'ar' ? ($name_ar ?: $name_en) : ($name_en ?: $name_ar);
             $products[] = [
                 'id' => $item->id,
-                'name' => $item->name,
-                'qty' => $item->qty,
+                 'name' => $name ?: $item->name,               
+             'qty' => $item->qty,
                 'price' => $item->price,
                 'image' => $item->options['image'] ?? null,
                 'subtotal' => $subtotal,
@@ -39,7 +44,7 @@ class OrderService
         $order = Order::create([
             'order_number' => Str::uuid(),
             'user_id' => Auth::id(),
-            'products' => json_encode($products),
+            'products' => json_encode($products, JSON_UNESCAPED_UNICODE),
             'city' => $request->city,
             'address' => $request->address,
             'building_number' => $request->building_number,

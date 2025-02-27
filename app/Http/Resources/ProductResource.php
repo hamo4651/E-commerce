@@ -14,18 +14,22 @@ class ProductResource extends JsonResource
      */
     public function toArray($request)
     {
+        $lang = $request->header('Accept-Language', 'en'); // افتراضيًا الإنجليزية
+    
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
+            'name' => $lang === 'ar' ? $this->name_ar : $this->name_en,
+            'description' => $lang === 'ar' ? $this->description_ar : $this->description_en,
             'price' => $this->price,
             'discounted_price' => $this->discounted_price,
             'quantity' => $this->quantity,
             'status' => $this->status,
             'images' => is_string($this->images) ? json_decode($this->images, true) : [],
-            'categories' => $this->categories->pluck('name'),  
-        
+            'categories' => $this->categories->map(function ($category) use ($lang) {
+                return $lang === 'ar' ? $category->name_ar : $category->name_en;
+            }),
         ];
     }
+    
     
 }

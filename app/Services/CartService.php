@@ -11,7 +11,7 @@ class CartService
   
 
   
-    public function addToCart($productId, $quantity)
+    public function addToCart($productId, $quantity, $request)
     {
         Cart::instance('user_' . Auth::id())->restore(Auth::id());
         $product = Product::findOrFail($productId);
@@ -20,10 +20,11 @@ class CartService
         $firstImage = !empty($images) ? $images[0] : 'default.jpg';
 
         $price = $product->discounted_price ?? $product->price;
+        $locale = $request->header('Accept-Language', 'en'); 
 
         Cart::instance('user_' . Auth::id())->add(
             $product->id,
-            $product->name,
+            $locale === 'ar' ? $product->name_ar : $product->name_en,
             $quantity,
             $price,
             1,

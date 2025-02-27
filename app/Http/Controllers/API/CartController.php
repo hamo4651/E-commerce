@@ -21,8 +21,9 @@ class CartController extends Controller
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1'
         ]);
+        // $locale = $request->header('Accept-Language', 'en'); 
 
-        $cart = $this->cartService->addToCart($request->product_id, $request->quantity);
+        $cart = $this->cartService->addToCart($request->product_id, $request->quantity, $request);
         return response()->json($cart, 200);
     }
 

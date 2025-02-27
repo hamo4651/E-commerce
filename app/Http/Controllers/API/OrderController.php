@@ -17,7 +17,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $order = $this->orderService->createOrder($request);
-        return response()->json($order, 201);
+        return response()->json($order, 201 ,[], JSON_UNESCAPED_UNICODE);
     }
     public function index()
     {

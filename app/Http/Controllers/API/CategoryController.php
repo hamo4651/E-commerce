@@ -21,6 +21,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = $this->categoryRepository->getAll();
+        
         return CategoryResource::collection($categories);
     }
 
@@ -32,6 +33,7 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         $validated = $request->validated();
+        // dd($validated);
         $category = $this->categoryRepository->create($validated);
         return response()->json(
             [
