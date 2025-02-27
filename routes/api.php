@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\OrderController;
+use App\Http\Controllers\API\PaymentController;
 
 // Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 //     return $request->user();
@@ -47,3 +48,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
 });
 ///////////////////////////// 
+
+
+ ///////////// Payment Routes //////////////
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/stripe/payment', [PaymentController::class, 'stripePayment']);
+    Route::post('/paypal/payment', [PaymentController::class, 'paypalPayment']);
+    Route::post('/paypal/capture', [PaymentController::class, 'paypalCapture']);
+});
