@@ -24,12 +24,8 @@ class GoogleAuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
-            $user = $this->googleAuthService->authenticateUser();
-            
-            return response()->json([
-                'user' => $user['user'],
-                'token' => $user['token'],
-            ]);
+            $response = $this->googleAuthService->authenticateUser();
+            return $response;
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
