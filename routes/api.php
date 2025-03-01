@@ -19,17 +19,36 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::group(["middleware"=>"auth:sanctum"],function(){
     Route::get( '/user', [AuthController::class, 'profile']);
-    Route::get( '/logout', [AuthController::class, 'logout']);
+    Route::post( '/logout', [AuthController::class, 'logout']);
 });
 ////////
-// ////////// Category Routes /////////////////////
-Route::apiResource('categories', CategoryController::class);
-//////////////////// Product Routes //////////////
-Route::apiResource('products', ProductController::class);
+// // ////////// Category Routes /////////////////////
+// Route::apiResource('categories', CategoryController::class);
+// //////////////////// Product Routes //////////////
+// Route::apiResource('products', ProductController::class);
 
-//////////////////    Cart Routes    ////////////// 
 
-Route::middleware('auth:sanctum')->group(function () {
+//////////////////// Category Routes /////////////////////
+Route::apiResource('categories', CategoryController::class)
+    ->only(['index', 'show'])
+    ->middleware(['auth:sanctum', 'verified']);
+
+Route::apiResource('categories', CategoryController::class)
+    ->except(['index', 'show'])
+    ->middleware(['auth:sanctum', 'verified', 'is_admin']);
+
+//////////////////// Product Routes /////////////////////
+Route::apiResource('products', ProductController::class)
+    ->only(['index', 'show'])
+    ->middleware(['auth:sanctum', 'verified']);
+
+Route::apiResource('products', ProductController::class)
+    ->except(['index', 'show'])
+    ->middleware(['auth:sanctum', 'verified', 'is_admin']);
+
+//////////////////    Cart Routes    //////////////     
+
+Route::middleware('auth:sanctum,verified')->group(function () {
    
 Route::post('/cart', [CartController::class, 'addToCart']); 
 Route::get('/cart', [CartController::class, 'getCartItems']); 
@@ -41,7 +60,7 @@ Route::post('/cart/clear', [CartController::class, 'clearCart']);
 /////////////////////
 
 ////////////////    Order Routes    //////////////
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum,verified')->group(function () {
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/{id}', [OrderController::class, 'show']);
@@ -52,7 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
  ///////////// Payment Routes //////////////
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum,verified')->group(function () {
     Route::post('/stripe/payment', [PaymentController::class, 'stripePayment']);
     Route::post('/paypal/payment', [PaymentController::class, 'paypalPayment']);
     Route::post('/paypal/capture', [PaymentController::class, 'paypalCapture']);

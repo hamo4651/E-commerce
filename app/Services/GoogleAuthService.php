@@ -1,6 +1,7 @@
 <?php namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -29,20 +30,16 @@ class GoogleAuthService
                     ]);
                 }
             } else {
-                // إنشاء مستخدم جديد إذا لم يكن موجودًا
                 $user = User::create([
                     'name'        => $googleUser->name,
                     'email'       => $googleUser->email,
                     'social_id'   => $googleUser->id,
                     'social_type' => 'google',
-                    'password'    => null, // عدم تعيين كلمة مرور
+                    'password'    => bcrypt(Str::random(16)),
                 ]);
             }
          
-            // تسجيل دخول المستخدم
-            // Auth::login($user);
-            // dd($user);
-            // إنشاء توكن للمستخدم
+          
             $token = $user->createToken('ecomm')->plainTextToken;
 
             return response()->json([
@@ -53,7 +50,8 @@ class GoogleAuthService
         } catch (\Exception $e) {
             Log::error('Google OAuth Error: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Authentication failed. Please try again.'
+                'error' => 'Authentication failed. Please try again.',
+                'message' => $e->getMessage()
             ], 401);
         }
     }

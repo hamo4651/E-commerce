@@ -61,7 +61,7 @@ use App\Models\Category;
         "description_en"=>$entity['description_en'],
         "description_ar"=>$entity['description_ar'],
         "status"=>$entity['status'],
-        'image' => $imageName ? asset('images/categories/' . $imageName) : null
+        'image' =>isset($entity['image'])? asset('images/categories/' . $imageName): $imageName
     ]);
     return $cat;
 

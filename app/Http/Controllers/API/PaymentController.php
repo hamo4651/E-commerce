@@ -7,6 +7,7 @@ use App\Services\StripeService;
 use App\Services\PaypalService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
@@ -21,13 +22,18 @@ class PaymentController extends Controller
 
     public function stripePayment(Request $request)
     {
-        $request->validate([
+        $validate = Validator::make($request->all(), [
             'order_number' => 'required|exists:orders,order_number',
             'token' => 'required'
+
         ]);
+      
+        if ($validate->fails()) {
+            return response()->json($validate->errors(), 422);
+        }
 
         $order = Order::where('order_number', $request->order_number)->first();
-
+      
         $amount = $order->total;
         //  dd($order);
         if($order->payment_status == 'paid'){
@@ -37,7 +43,13 @@ class PaymentController extends Controller
               
         if ($response['status']) {
             $order->update(['payment_status' => 'paid']);
-            return response()->json(['message' => 'Payment successful', 'charge' => $response['charge']], 200);
+            return response()->json(['message' => 'Payment successful', 
+            'id' => $response['charge']->id,
+            'amount' => $response['charge']->amount,
+            'currency' => $response['charge']->currency,
+            'status' => $response['charge']->status,
+            "receipt_url" => $response['charge']->receipt_url
+        ], 200);
         } else {
             return response()->json(['error' => $response['error']], 500);
         }
